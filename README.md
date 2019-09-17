@@ -1,3 +1,5 @@
+How to Start:  npm run build
+
 # Card-Memory-Game
 
 **Tier:** 2-Intermediate
