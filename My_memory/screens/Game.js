@@ -11,20 +11,20 @@ class Game extends Component {
 
   constructor(props) {
     super(props);
-
+    //console.log(data_cards);  Contenu d'img se transforme en int
     let clone = JSON.parse(JSON.stringify(data_cards));
-  
+    //console.log(clone);
     this.cards = data_cards.concat(clone);
-    
+    //console.log(this.cards);
+    let i = 0;
+
     this.cards.map((obj, index) => {
-      let id = Math.random()
-        .toString(36)
-        .substring(7);
+      let id = i + 1;
       obj.id = id;
-      obj.img = ;
+      obj.img = this.cards[i]; //Problem
       obj.is_open = false;
     });
-  
+
     this.cards = shuffle(this.cards);
   }
 

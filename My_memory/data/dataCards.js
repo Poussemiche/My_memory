@@ -48,5 +48,5 @@ const data_cards = [
       img: require("../assets/trident.png")
     }
   ];
-  
+
   export default data_cards;
