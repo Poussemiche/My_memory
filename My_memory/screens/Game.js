@@ -1,16 +1,135 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet, FlatList, SafeAreaView, Text } from 'react-native';
+import Cards from './Cards';
+import data_cards from '../data/dataCards';
 
 class Game extends Component {
+  state = {
+    cardSelection: [],
+    cardIsPairs: [],
+  };
+
+  constructor(props) {
+    super(props);
+
+    let clone = JSON.parse(JSON.stringify(data_cards));
+  
+    this.cards = data_cards.concat(clone);
+    
+    this.cards.map((obj, index) => {
+      let id = Math.random()
+        .toString(36)
+        .substring(7);
+      obj.id = id;
+      obj.img = ;
+      obj.is_open = false;
+    });
+  
+    this.cards = shuffle(this.cards);
+  }
+
+  componentDidMount() {
+    this.setState({
+      cards: this.cards
+    });
+  }
+
   render() {
-    return(
-    <View style= {{ alignContent: 'stretch' }}>
-      <View style={{width: 50, height: 50, backgroundColor: 'red'}} />
-      <View style={{width: 50, height: 50, backgroundColor: 'powderblue'}} />
-      <View style={{width: 50, height: 50, backgroundColor: 'blue'}} />
-    </View>
-  );
+    let contents = this.state.cards;
+
+    return (
+      <SafeAreaView style={ styles.card }>
+        <FlatList
+          data={ contents }
+          renderItem={ this.renderCard }
+          numColumns={ 4 }
+          keyExtractor={ item => item.id }
+        />
+      </SafeAreaView>
+    );
   }
 }
 
+renderCard = ({ item }) => {
+  return (
+    <Card
+      id={ item.id }
+      img={ item.img }
+      is_open={ item.is_open }
+    />
+  );
+};
+
+
+
+function shuffle(arra1) {
+  let ctr = arra1.length;
+  let temp;
+  let idx;
+
+  while (ctr > 0) {
+      idx = Math.floor(Math.random() * ctr);
+      ctr--;
+
+      temp = arra1[ctr];
+      arra1[ctr] = arra1[idx];
+      arra1[idx] = temp;
+  }
+  return arra1;
+}
+
+//STYLE
+const styles = StyleSheet.create({
+  card: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  }
+});
+
 export default Game;
+
+clickCard = id => {
+  let cardIsPair = [...this.state.cardIsPair];
+  let cardSelection = this.state.cardSelection;
+
+  let idx = this.state.cards.findIndex(card => {
+    return card.id == id;
+  });
+
+  let cards = [...this.state.cards];
+
+  if (
+    cards[idx].is_open == false &&
+    cardIsPair.indexOf(cards[idx].name) === -1
+  ) {
+    cards[idx].is_open = true;
+
+    cardSelection.push({
+      idx: idx,
+      name: cards[idx].name
+    });
+
+    if (cardSelection.length == 2) {
+      if (cardSelection[0].name == cardSelection[1].name) {
+        cardIsPair.push(cards[idx].name);
+      } else {
+        cards[cardSelection[0].idx].is_open = false;
+
+        setTimeout(() => {
+          cards[idx].is_open = false;
+          this.setState({
+            cards: cards
+          });
+        }, 500);
+      }
+
+      cardSelection = [];
+    }
+
+    this.setState({
+      cards: cards,
+      cardSelection: cardSelection
+    });
+  }
+};
